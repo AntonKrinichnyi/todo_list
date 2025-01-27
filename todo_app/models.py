@@ -11,3 +11,6 @@ class Task(models.Model):
     done = models.BooleanField(default=False)
     tag = models.ManyToManyField(Tag, related_name='tasks')
     
+    
+    class Meta:
+        ordering = ["-datetime"]
