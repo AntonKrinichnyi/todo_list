@@ -2,13 +2,13 @@
 {% load crispy_forms_filters %}
 {% block content %}
   <h1>
-    Manufacturer List
+    Tag List
     <a href="{% url 'todo_app:tag-create' %}" class="btn btn-primary link-to-page">
       Create
     </a>
   </h1>
 
-  {% if rag_list %}
+  {% if tag_list %}
     <table class="table">
       <tr>
         <th>Name</th>

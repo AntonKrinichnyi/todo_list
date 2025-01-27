@@ -1,37 +1,79 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
 {% block content %}
-  <h1>
-    TODO list
-    <a href="{% url 'todo_app:task-create' %}" class="btn btn-primary link-to-page">
-      Add task
+<h1>
+  TODO list
+  <a
+    href="{% url 'todo_app:task-create' %}"
+    class="btn btn-primary link-to-page"
+  >
+    Add task
+  </a>
+</h1>
+{% if task_list %}
+<ul class="list-group list-group-flush">
+  {% for task in task_list %}
+  <li class="list-group-item">
+    <p>
+      {{ task.content }}
+      {% if task.done %}
+      <a style="color: green;">
+        Done
+      </a>
+      <form
+        action="{% url 'todo_app:toggle-task-assign' pk=task.id %}"
+        method="POST"
+        class="link-to-page"
+      >
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn btn-secondary"
+        >Undo</button>
+      </form>
+    </p>
+    {% else %}
+    <a style="color: red;">Not done</a>
+    <form
+      action="{% url 'todo_app:toggle-task-assign' pk=task.id %}"
+      method="POST"
+      class="link-to-page"
+    >
+      {% csrf_token %}
+      <button
+        type="submit"
+        class="btn btn-success"
+      >Complete</button>
+    </form>
+    {% endif %}
+    <br>
+    <div class="inline">
+      <p>
+        Created: {{ task.datetime }}
+      {% if task.deadline %}
+        <a style="color: brown;">Deadline: {{ task.deadline }}</a>
+        {% endif %}
+      </p>
+    </div>
+    {% if task.tags %}
+    <p>
+      Tags:
+    {% for tag in task.tags.all %}
+    {{ tag.name }}
+    {% endfor %}
+    </p>
+    {% endif %}
+    <a href="{% url 'todo_app:task-delete' pk=task.id %}" class="btn btn-danger">
+      Delete
     </a>
-  </h1>
-  {% if task_list %}
-    <ul>
-      {% for task in task_list %}
-        <li>
-          <p>{{ task.content }}</p>
-          {% if task.done %}
-            <p style="color: green;">Done</p>
-            <a
-            href="{% url 'todo_app:toggle-task-assign' pk=task.id %}"
-            class="btn btn-success">Complete</a>
-          {% else %}
-            <p style="color: red;">Not done</p>
-            <a
-            href="{% url 'todo_app:toggle-task-assign' pk=task.id %}"
-            class="btn btn-secondary">Undo</a>
-          {% endif %}
-          <br>
-          <p>Created: {{ task.datetime }}</p>
-          {% if task.deadline %}
-            <p style="color: brown;">Deadline: {{ task.deadline }}</p>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no tasks yet</p>
-  {% endif %}
+
+    <a href="{% url 'todo_app:task-update' pk=task.id %}" class="btn btn-secondary">
+      Update
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>There are no tasks yet</p>
+{% endif %}
 {% endblock %}
